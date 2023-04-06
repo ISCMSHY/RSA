@@ -56,19 +56,18 @@ int prime_F(int N, int* prime, int* pow_a, int idx){
                 N /= prime[i];
                 if(N == 1)  return 0;
                 break;
-            }else if(i + 1 == idx)  return 1; // N값이 소수일 경우.
+            }else if(i + 1 == idx)  return 1; // N is prime
         }
     }
 }
 
-// 오일러 파이 함수 구현
 int euler_p(int N){
     int result = 1;
-    int *prime = (int*) calloc(N, sizeof(int)); // N 이하의 모든 소수를 담을 list
-    int idx = euler_seive(N, prime); // 오일러 체를 이용하여 N 이하의 모든 소수를 담음
-    int *pow_a = (int*) calloc(idx, sizeof(int)); // 위에서 구한 소수를 통해 N을 소인수 분해 할 때 지수를 담을 list
-    if(prime_F(N, prime, pow_a, idx) == 1)  return N - 1; // 위에서 구한 소수를 통해 N을 소인수 분해 후 각 소수들의 지수를 return (return == 1 인 경우는 소수)
-    // 오일러 파이 함수의 특징 phi(p^a) = p^a - p^(a-1)을 이용하여 오일러 파이 값을 구함
+    int *prime = (int*) calloc(N, sizeof(int)); // get all prime below N
+    int idx = euler_seive(N, prime);
+    int *pow_a = (int*) calloc(idx, sizeof(int)); // get each power of prime 
+    if(prime_F(N, prime, pow_a, idx) == 1)  return N - 1; // Do prime Factorization. return value 1 means prime number
+    // Get euler phi value using by phi(p^a) = p^a - p^(a-1)
     for(int i = 0; i < idx; i++)    if(pow_a[i] != 0)   result *= (pow(prime[i], pow_a[i]) - pow(prime[i], pow_a[i] - 1)); // 
     return result;
 }
@@ -90,11 +89,10 @@ int F(int N){
 
 void create_RSA_key(long long p, long long q, long long *e, long long *d){
     long long phi_N = (p-1)*(q-1);
-    // gcd(phi_n, e) = 1을 만족하는 모든 e를 구하기
     if(*e == 0){
-        long long *e_list = (long long*) calloc(euler_p(phi_N) - 1, sizeof(long long)); // 서로소 개수 구하는데 1과 자기자신을 제외하니까 -2
+        long long *e_list = (long long*) calloc(euler_p(phi_N) - 1, sizeof(long long));
         get_e(phi_N, e_list);
-        *e = e_list[8]; // 가장 효율적인 e값이 무엇인지 모르겠음... 그냥 8번째 인덱스에 있는 e return
+        *e = e_list[0]; // 가장 효율적인 e값이 무엇인지 모르겠음...
         for(int i = 0; i < 31; i++) printf("%lld, %lld\n", e_list[i], EEA(phi_N, e_list[i]));
     }
     *d = EEA(phi_N, *e);
