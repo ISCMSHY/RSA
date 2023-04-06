@@ -1,17 +1,14 @@
 #include "RSA_func.h"
 
-// change hex to char
 char hex_to_char(int hex){
     return hex - 48 + '0';
 }
 
-// Euclidean Algorithm
 long long EA(long long a, long long b){
     if(b == 0)  return a;
     else    return EA(b, a % b);
 }
 
-// Extended Euclidean Algorithm
 long long EEA(long long a, long long b){
     long long r0 = a, s0 = 1, t0 = 0;
     long long r1 = b, s1 = 0, t1 = 1;
@@ -31,13 +28,11 @@ long long EEA(long long a, long long b){
     return t0;
 }
 
-// gcd(phi_N, e) = 1을 만족하는 모든 e를 구함
 void get_e(long long phi_N, long long* e_list){
     int idx = 0;
     for(int i = 2; i < phi_N; i++)  if(EA(phi_N, i) == 1)   e_list[idx++] = i;
 }
 
-// 오일러 체 알고리즘 사용
 int euler_seive(int N, int* prime){
     int *spf = (int*) calloc(N, sizeof(int));
     int prime_idx = 0;
@@ -53,7 +48,6 @@ int euler_seive(int N, int* prime){
     return prime_idx - 1;
 }
 
-// 소인수 분해
 int prime_F(int N, int* prime, int* pow_a, int idx){
     while(1){
         for(int i = 0; i < idx; i++){
